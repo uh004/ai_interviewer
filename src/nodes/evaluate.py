@@ -56,10 +56,10 @@ def evaluate_answer(state: State) -> State:
          "저는 전처리 파이프라인을 설계/적용했습니다."
          ),
         ("ai",
-         '{"specificity":{"score":1,"rationale":"수치/역할/방법이 구체적"},'
-         '"consistency":{"score":1,"rationale":"개선 방법과 결과가 연결됨"},'
-         '"fit":{"score":1,"rationale":"질문 의도에 직접 답함"},'
-         '"logic":{"score":1,"rationale":"원인-행동-결과 구조가 명확"}}'
+         '{{"specificity":{{"score":1,"rationale":"수치/역할/방법이 구체적"}},'
+         '"consistency":{{"score":1,"rationale":"개선 방법과 결과가 연결됨"}},'
+         '"fit":{{"score":1,"rationale":"질문 의도에 직접 답함"}},'
+         '"logic":{{"score":1,"rationale":"원인-행동-결과 구조가 명확"}}}}'
          ),
 
         # bad shot
@@ -69,10 +69,10 @@ def evaluate_answer(state: State) -> State:
          "답변: 열심히 했고 팀워크가 좋았습니다."
          ),
         ("ai",
-         '{"specificity":{"score":0,"rationale":"수치/방법/역할이 없음"},'
-         '"consistency":{"score":0,"rationale":"흐름이 없음"},'
-         '"fit":{"score":0,"rationale":"질문과 직접 연결이 약함"},'
-         '"logic":{"score":0,"rationale":"원인/과정/결과가 없음"}}'
+         '{{"specificity":{{"score":0,"rationale":"수치/방법/역할이 없음"}},'
+         '"consistency":{{"score":0,"rationale":"흐름이 없음"}},'
+         '"fit":{{"score":0,"rationale":"질문과 직접 연결이 약함"}},'
+         '"logic":{{"score":0,"rationale":"원인/과정/결과가 없음"}}}}'
          ),
 
         # real
