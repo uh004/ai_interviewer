@@ -1,6 +1,6 @@
 import gradio as gr
 from src.nodes.preprocess import pre_processing_interview
-from src.graph import build_graph
+from src.nodes.graph import build_graph
 
 graph = build_graph()
 
