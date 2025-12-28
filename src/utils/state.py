@@ -1,22 +1,22 @@
-from typing import TypedDict, List, Dict, Literal
+from typing import TypedDict, List, Dict, Literal, Any
 from pydantic import BaseModel, Field
 
-class State(TypedDict):
+class State(TypedDict, total=False):
     resume_text: str
     resume_summary: str
     resume_keywords: List[str]
-    question_strategy: Dict[str, Dict]
+    question_strategy: Dict[str, Dict[str, str]]
 
     current_question: str
     current_answer: str
     current_strategy: str
 
     conversation: List[Dict[str, str]]
-    evaluation: Dict[str, Dict]     # ✅ 너 지금 내부에서 dict로 쓰고 있어서 dict로 통일 권장
+    evaluation: Dict[str, Dict[str, Any]]
     next_step: str
     deep_counts: Dict[str, int]
 
-    final_report: str  # (선택) summarize에서 저장
+    final_report: str
 
 # ---- Pydantic schema들 ----
 class ResumeAnalysis(BaseModel):

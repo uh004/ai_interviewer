@@ -6,6 +6,7 @@ from src.utils.io import extract_text_from_file
 
 llm = get_llm()
 
+
 def analyze_resume(state: State) -> State:
     resume_text = state["resume_text"]
     prompt = ChatPromptTemplate.from_messages([
@@ -19,8 +20,8 @@ def analyze_resume(state: State) -> State:
 
     return {**state, "resume_summary": result.summary, "resume_keywords": result.keywords}
 
-def generate_question_strategy(state: InterviewState) -> InterviewState:
 
+def generate_question_strategy(state: State) -> State:
     summary = state.get("resume_summary", "")
     keywords = state.get("resume_keywords", [])
 
@@ -63,37 +64,27 @@ def generate_question_strategy(state: InterviewState) -> InterviewState:
         "keywords": ", ".join(keywords) if isinstance(keywords, list) else str(keywords)
     })
 
-    # 현재 프로젝트는 "전략(direction)"까지 저장하기보다,
-    # 실제 인터뷰에서 사용할 "첫 질문 문자열"만 분야/면접관별로 뽑아 쓰는 구조로 맞춤
     strategy_dict = {
-        "경험": {
-            "A": result.potential.experience.examples[0],
-            "B": result.organization.experience.examples[0],
-            "C": result.job.experience.examples[0],
-        },
-        "동기": {
-            "A": result.potential.motivation.examples[0],
-            "B": result.organization.motivation.examples[0],
-            "C": result.job.motivation.examples[0],
-        },
-        "논리": {
-            "A": result.potential.logic.examples[0],
-            "B": result.organization.logic.examples[0],
-            "C": result.job.logic.examples[0],
-        },
+        "경험": {"A": result.potential.experience.examples[0],
+               "B": result.organization.experience.examples[0],
+               "C": result.job.experience.examples[0]},
+        "동기": {"A": result.potential.motivation.examples[0],
+               "B": result.organization.motivation.examples[0],
+               "C": result.job.motivation.examples[0]},
+        "논리": {"A": result.potential.logic.examples[0],
+               "B": result.organization.logic.examples[0],
+               "C": result.job.logic.examples[0]},
     }
 
     return {**state, "question_strategy": strategy_dict}
 
-def preProcessing_Interview(file_path: str) -> InterviewState:
-    """
-    이력서 파일 입력 → Resume 분석 → 질문전략 생성 → 첫 질문 선택까지 1회성으로 수행합니다.
-    첫 질문은 '경험' 카테고리의 A/B/C 중 랜덤 1개를 선택합니다.
-    """
+
+# ✅ 이름을 import되는 이름과 동일하게
+def pre_processing_interview(file_path: str) -> State:
     resume_text = extract_text_from_file(file_path)
 
-    # State 초기화 (※ 타입/로직에 맞게 dict 구조로 초기화)
-    state: InterviewState = {
+    # ✅ State로 통일
+    state: State = {
         "resume_text": resume_text,
         "resume_summary": "",
         "resume_keywords": [],
@@ -104,28 +95,17 @@ def preProcessing_Interview(file_path: str) -> InterviewState:
         "current_strategy": "",
 
         "conversation": [],
-        "evaluation": {},        # ✅ dict로
+        "evaluation": {},      # dict
         "next_step": "",
-        "deep_counts": {},       # ✅ {분야: int}
+        "deep_counts": {},     # {분야:int}
         "final_report": "",
     }
 
-    # 1) Resume 분석
     state = analyze_resume(state)
-
-    # 2) 질문 전략 생성
     state = generate_question_strategy(state)
 
-    # 3) 첫 질문 선택: '경험' + 면접관 랜덤(A/B/C)
-    strategy = state["question_strategy"]
-    interviewers = ["A", "B", "C"]
-
     cat = "경험"
-    iv = random.choice(interviewers)
-    selected_question = strategy[cat][iv]
+    iv = random.choice(["A", "B", "C"])
+    selected_question = state["question_strategy"][cat][iv]
 
-    return {
-        **state,
-        "current_question": selected_question,
-        "current_strategy": cat,
-    }
+    return {**state, "current_question": selected_question, "current_strategy": cat}
