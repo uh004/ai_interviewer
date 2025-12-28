@@ -1,0 +1,8 @@
+langchain-openai
+langchain-core
+langchain-community
+langgraph
+PyMuPDF
+python-docx
+python-dotenv
+gradio
